@@ -7,7 +7,7 @@ defineCustomElements();
 const handRaise = document.getElementById('dyte-controlbar-button');
 const searchParams = new URL(window.location.href).searchParams;
 let m;
-const authToken = `eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1NTdmOTQ5LWRkMGYtNDZkMy1iNjJlLTczNDhiMTcxNGNkYiIsImxvZ2dlZEluIjp0cnVlLCJpYXQiOjE2NzU3NTE4MzYsImV4cCI6MTY4NDM5MTgzNn0.Zr1l9nzGbhl5a4HjDX9Bjt26K1P0R6b_RasuFIvhtUEPGKipsI3SRIojMOlhrGkWKZ1t3d9qJNndeKN1uHcWYZd_TGeBZAKA-JID8woMiFG8D0jeL2hVQsU9O_pMLeHUHkFt_gO_6lq5YT9WppDGgTrvfYw2h2R15nuQQplz8GA`;
+const authToken = searchParams.get('authToken') 
 const roomName = searchParams.get('roomName') || 'eqdqcp-rrrsqm';
 
 if (!authToken) {
