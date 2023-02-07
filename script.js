@@ -60,6 +60,12 @@ DyteClient.init({
       li.id = payload.id;
       li.innerText = payload.name;
       document.getElementById('hand-raise-list').appendChild(li);
+      // Send Notification
+      sendNotification({
+        id: new Date().getTime().toString(),
+        message: `Hand Raised by ${payload.name}`,
+        duration: 3000,
+      }, 'message')
     } else {
       const li = document.getElementById(payload.id);
       document.getElementById('hand-raise-list').removeChild(li);
@@ -104,12 +110,5 @@ function handleHandRaise() {
     id: m.self.id,
     name: m.self.name,
   })
-  // Send Notification
-  if (key === 'hand-unraised') return;
-  sendNotification({
-    id: new Date().getTime().toString(),
-    message: `Hand Raised by ${m.self.name}`,
-    duration: 3000,
-  }, 'message')
 }
 
