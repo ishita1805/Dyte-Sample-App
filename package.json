@@ -1,16 +1,22 @@
 {
   "name": "html-samples",
   "scripts": {
-    "format": "prettier -w samples"
+    "format": "prettier .",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "prettier": {
     "singleQuote": true,
     "proseWrap": "always"
   },
   "devDependencies": {
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "vite": "^4.1.0"
   },
   "dependencies": {
+    "@dytesdk/ui-kit": "^1.41.5",
+    "@dytesdk/web-core": "^1.3.1",
     "serve": "^14.1.2"
   }
 }

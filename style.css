@@ -1,0 +1,78 @@
+body, html {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgb(8, 8, 8);
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.grid-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+dyte-grid {
+   flex-grow: 1;
+}
+
+dyte-sidebar {
+    margin: 10px 20px;
+    border-radius: 10px;
+    max-width: 360px;
+}
+
+.dyte-controlbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: 20px;
+    margin:10px 0;
+    width: 100%;
+}
+
+.hand-raise-button {
+    color: red;
+}
+
+#dyte-sidebar-el {
+    min-width: 360px;
+}
+
+#dyte-handraise-el {
+    min-width: 300px;
+    margin: 10px 20px;
+    border-radius: 10px;
+    max-width: 300px;
+    padding: 10px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+#dyte-handraise-el ul {
+    list-style-type: none;
+    width: 100%;
+    padding: 0;
+}
+
+#dyte-handraise-el li {
+    list-style-type: none;
+    background: rgb(20, 20, 20);
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    cursor: pointer;
+    text-align: left;
+}
