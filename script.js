@@ -7,8 +7,18 @@ defineCustomElements();
 const handRaise = document.getElementById('dyte-controlbar-button');
 const searchParams = new URL(window.location.href).searchParams;
 let m;
+
+/**
+ * A room name is generated when a meeting is created.
+ * Documentation: https://docs.dyte.io/api/?v=v1#/operations/create_meeting
+ */
+const roomName = searchParams.get('roomName') ?? '';
+
+/**
+ * An auth token is generated when a participant is added to the meeitng.
+ * Documentation: https://docs.dyte.io/api#/operations/add_participant 
+ */
 const authToken = searchParams.get('authToken') 
-const roomName = searchParams.get('roomName') || 'eqdqcp-rrrsqm';
 
 if (!authToken) {
   alert(
@@ -31,7 +41,6 @@ DyteClient.init({
     audio: false,
     video: false,
   },
-  apiBase: 'https://api.staging.dyte.in',
   roomName,
 }).then((meeting) => {
   console.log(meeting.self.config);
