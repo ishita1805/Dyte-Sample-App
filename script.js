@@ -51,22 +51,8 @@ DyteClient.init({
       const li = document.createElement('li');
       li.id = payload.id;
       li.innerText = payload.name;
-      li.onclick = () => {
-        // Check if user has the correct permissions
-        if (!m.self.permissions.canAllowParticipantAudio) return;
-        m.participants.broadcastMessage('allowed-to-speak', payload);
-        sendNotification({
-          id: new Date().getTime().toString(),
-          message: `${payload.name} was allowed to speak`,
-          duration: 3000,
-        }, 'message')
-      }
       document.getElementById('hand-raise-list').appendChild(li);
     } else {
-      if (type === 'allowed-to-speak' && payload.id === m.self.id) {
-        // Toggle button for selected participant
-        handRaise.classList.toggle('hand-raise-button');
-      }
       const li = document.getElementById(payload.id);
       document.getElementById('hand-raise-list').removeChild(li);
     }
