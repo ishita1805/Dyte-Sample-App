@@ -43,7 +43,6 @@ DyteClient.init({
   },
   roomName,
 }).then((meeting) => {
-  console.log(meeting.self.config);
   passMeetingProp(meeting);
   m = meeting;
   document.getElementById('my-audio').meeting = meeting;
@@ -77,7 +76,6 @@ DyteClient.init({
 
 // Listen for state updates
 document.body.addEventListener('dyteStateUpdate', ({detail}) => {
-  console.log(detail.activeSidebar);
   if (detail.activeSidebar) {
     document.getElementById('dyte-sidebar-el').style.display = 'flex';
     document.getElementById('dyte-handraise-el').style.display = 'none';
@@ -85,6 +83,14 @@ document.body.addEventListener('dyteStateUpdate', ({detail}) => {
     document.getElementById('dyte-sidebar-el').style.display = 'none';
     document.getElementById('dyte-handraise-el').style.display = 'flex';
   }
+})
+
+document.getElementsByTagName('dyte-leave-button')[0].addEventListener('click', () => {
+  console.log('leave meeting');
+  m.leaveRoom();
+  const app = document.getElementById('app');
+  app.classList.add('ended-screen');
+  app.innerHTML = 'Meeting Ended'
 })
 
 // Hand Raise
