@@ -59,14 +59,6 @@ DyteClient.init({
       const li = document.createElement('li');
       li.id = payload.id;
       li.innerHTML = `<p>${payload.name}</p>`;
-      const acceptButton = document.createElement('button');
-      acceptButton.innerText = 'Accept';
-      acceptButton.onclick = () => {
-        m.participants.broadcastMessage('hand-raise-accepted', { 
-          id: payload.id,
-          name: payload.name,
-        })
-      }
       const rejectButton = document.createElement('button');
       rejectButton.innerText = 'Reject';
       rejectButton.onclick = () => {
@@ -75,7 +67,6 @@ DyteClient.init({
           name: payload.name,
         })
       }
-      li.appendChild(acceptButton)
       li.appendChild(rejectButton)
       document.getElementById('hand-raise-list').appendChild(li);
       // Send Notification
@@ -85,14 +76,6 @@ DyteClient.init({
         duration: 3000,
       }, 'message')
     } else {
-      if (type === 'hand-raise-accepted') {
-        if (payload.id !== m.self.id) return;
-        sendNotification({
-          id: new Date().getTime().toString(),
-          message: `Hand raise request accepted.`,
-          duration: 3000,
-        }, 'message')
-      } 
       if (type === 'hand-raise-rejected') {
         if (payload.id !== m.self.id) return;
         sendNotification({
