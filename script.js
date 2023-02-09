@@ -62,10 +62,19 @@ DyteClient.init({
       const rejectButton = document.createElement('button');
       rejectButton.innerText = 'Reject';
       rejectButton.onclick = () => {
+        if (m.self.id === payload.id) {
+          m.participants.broadcastMessage('hand-unraised', { 
+            id: payload.id,
+            name: payload.name,
+          })
+          return;
+        }
         m.participants.broadcastMessage('hand-raise-rejected', { 
           id: payload.id,
           name: payload.name,
         })
+        const removeLiItem = document.getElementById(payload.id);
+        document.getElementById('hand-raise-list').removeChild(removeLiItem);
       }
       li.appendChild(rejectButton)
       document.getElementById('hand-raise-list').appendChild(li);
@@ -84,8 +93,8 @@ DyteClient.init({
           duration: 3000,
         }, 'message')
       }
-       const li = document.getElementById(payload.id);
-      document.getElementById('hand-raise-list').removeChild(li);
+      const li = document.getElementById(payload.id);
+      if (li) document.getElementById('hand-raise-list').removeChild(li);
       handRaise.classList.remove('hand-raise-button');
     } 
 
