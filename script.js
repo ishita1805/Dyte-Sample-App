@@ -1,10 +1,9 @@
 import { defineCustomElements } from '@dytesdk/ui-kit/loader';
-import { sendNotification } from '@dytesdk/ui-kit';
+import { sendNotification, defaultIconPack } from '@dytesdk/ui-kit';
 import DyteClient from '@dytesdk/web-core';
 defineCustomElements();
 
 // Define variables
-const handRaise = document.getElementById('dyte-controlbar-button');
 const searchParams = new URL(window.location.href).searchParams;
 let m;
 
@@ -12,13 +11,13 @@ let m;
  * A room name is generated when a meeting is created.
  * Documentation: https://docs.dyte.io/api/?v=v1#/operations/create_meeting
  */
-const roomName = searchParams.get('roomName') ?? '';
+const roomName = searchParams.get('roomName') ?? 'eqdqcp-rrrsqm';
 
 /**
  * An auth token is generated when a participant is added to the meeitng.
  * Documentation: https://docs.dyte.io/api#/operations/add_participant 
  */
-const authToken = searchParams.get('authToken') 
+const authToken = `eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE1NTdmOTQ5LWRkMGYtNDZkMy1iNjJlLTczNDhiMTcxNGNkYiIsImxvZ2dlZEluIjp0cnVlLCJpYXQiOjE2NzU3NTE4MzYsImV4cCI6MTY4NDM5MTgzNn0.Zr1l9nzGbhl5a4HjDX9Bjt26K1P0R6b_RasuFIvhtUEPGKipsI3SRIojMOlhrGkWKZ1t3d9qJNndeKN1uHcWYZd_TGeBZAKA-JID8woMiFG8D0jeL2hVQsU9O_pMLeHUHkFt_gO_6lq5YT9WppDGgTrvfYw2h2R15nuQQplz8GA`;
 
 if (!authToken) {
   alert(
@@ -34,6 +33,24 @@ function passMeetingProp(meeting) {
     }
 }
 
+const createParticipantSidebar = () => {
+  if (document.getElementById('dyte-handraise-el').childNodes.length < 4) {
+    const self = document.createElement('dyte-participant');
+    self.meeting = m;
+    self.participant = m.self;
+    document.getElementById('dyte-handraise-el').appendChild(self);
+    for (let p of m.participants.joined.values()) {
+      const participant = document.createElement('dyte-participant');
+      participant.meeting = m;
+      participant.participant = p;
+      participant.onclick = () => {
+        m.participants.broadcastMessage('unmute', {id: p.id});
+      }
+      document.getElementById('dyte-handraise-el').appendChild(participant);
+    }
+  }
+}
+
 // Initialize a meeting
 DyteClient.init({
   authToken,
@@ -41,6 +58,7 @@ DyteClient.init({
     audio: false,
     video: false,
   },
+  apiBase: 'https://api.staging.dyte.in',
   roomName,
 }).then((meeting) => {
   passMeetingProp(meeting);
@@ -53,35 +71,34 @@ DyteClient.init({
     participant_joined_sound_notification_limit: 10,
     participant_chat_message_sound_notification_limit: 10,
   };
-  // Manage hand raise
-  m.participants.on('broadcastedMessage', ({type, payload}) => {
-    if (type === 'hand-raised') {
-      const li = document.createElement('li');
-      li.id = payload.id;
-      li.innerText = payload.name;
-      document.getElementById('hand-raise-list').appendChild(li);
-    } else {
-      const li = document.getElementById(payload.id);
-      document.getElementById('hand-raise-list').removeChild(li);
-    }
 
-    if (document.getElementById('hand-raise-list').childNodes.length > 0) {
-      document.getElementById('empty-message').style.display = 'none';
-    } else {
-      document.getElementById('empty-message').style.display = 'flex';
+  m.participants.addListener('broadcastedMessage', ({payload, type}) => {
+    console.log(type, payload);
+    if(type === 'unmute' && payload.id === m.self.id) {
+      sendNotification({
+        id: new Date().getTime().toString(),
+        message: 'Please unmute your Microphone'
+      }, 'message');
     }
-  })
+  });
+
   meeting.joinRoom();
 });
 
 // Listen for state updates
 document.body.addEventListener('dyteStateUpdate', ({detail}) => {
-  if (detail.activeSidebar) {
-    document.getElementById('dyte-sidebar-el').style.display = 'flex';
+  if (!detail.activeSidebar) {
+    document.getElementById('dyte-sidebar-el').style.display = 'none';
     document.getElementById('dyte-handraise-el').style.display = 'none';
   } else {
-    document.getElementById('dyte-sidebar-el').style.display = 'none';
-    document.getElementById('dyte-handraise-el').style.display = 'flex';
+    if (detail.sidebar === 'participants') {
+      createParticipantSidebar();
+      document.getElementById('dyte-sidebar-el').style.display = 'none';
+      document.getElementById('dyte-handraise-el').style.display = 'flex';
+    } else {
+      document.getElementById('dyte-sidebar-el').style.display = 'flex';
+      document.getElementById('dyte-handraise-el').style.display = 'none';
+    }
   }
 })
 
@@ -93,23 +110,4 @@ document.getElementsByTagName('dyte-leave-button')[0].addEventListener('click', 
   app.innerHTML = 'Meeting Ended'
 })
 
-// Hand Raise
-handRaise.addEventListener('click', handleHandRaise)
-function handleHandRaise() {
-  // Toggle UI
-  handRaise.classList.toggle('hand-raise-button');
-  // Broadcast Message
-  const key = handRaise.classList.contains('hand-raise-button') ? 'hand-raised' : 'hand-unraised'
-  m.participants.broadcastMessage(key, { 
-    id: m.self.id,
-    name: m.self.name,
-  })
-  // Send Notification
-  if (key === 'hand-unraised') return;
-  sendNotification({
-    id: new Date().getTime().toString(),
-    message: `Hand Raised by ${m.self.name}`,
-    duration: 3000,
-  }, 'message')
-}
 
