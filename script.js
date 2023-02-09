@@ -58,7 +58,25 @@ DyteClient.init({
     if (type === 'hand-raised') {
       const li = document.createElement('li');
       li.id = payload.id;
-      li.innerText = payload.name;
+      li.innerHTML = `<p>${payload.name}</p>`;
+      const acceptButton = document.createElement('button');
+      acceptButton.innerText = 'Accept';
+      acceptButton.onclick = () => {
+        m.participants.broadcastMessage('hand-raise-accepted', { 
+          id: payload.id,
+          name: payload.name,
+        })
+      }
+      const rejectButton = document.createElement('button');
+      rejectButton.innerText = 'Reject';
+      rejectButton.onclick = () => {
+        m.participants.broadcastMessage('hand-raise-rejected', { 
+          id: payload.id,
+          name: payload.name,
+        })
+      }
+      li.appendChild(acceptButton)
+      li.appendChild(rejectButton)
       document.getElementById('hand-raise-list').appendChild(li);
       // Send Notification
       sendNotification({
@@ -67,9 +85,26 @@ DyteClient.init({
         duration: 3000,
       }, 'message')
     } else {
-      const li = document.getElementById(payload.id);
+      if (type === 'hand-raise-accepted') {
+        if (payload.id !== m.self.id) return;
+        sendNotification({
+          id: new Date().getTime().toString(),
+          message: `Hand raise request accepted.`,
+          duration: 3000,
+        }, 'message')
+      } 
+      if (type === 'hand-raise-rejected') {
+        if (payload.id !== m.self.id) return;
+        sendNotification({
+          id: new Date().getTime().toString(),
+          message: `Hand raise request denied.`,
+          duration: 3000,
+        }, 'message')
+      }
+       const li = document.getElementById(payload.id);
       document.getElementById('hand-raise-list').removeChild(li);
-    }
+      handRaise.classList.remove('hand-raise-button');
+    } 
 
     if (document.getElementById('hand-raise-list').childNodes.length > 0) {
       document.getElementById('empty-message').style.display = 'none';

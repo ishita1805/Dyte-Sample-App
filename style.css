@@ -82,4 +82,15 @@ dyte-sidebar {
     margin: 10px 0;
     cursor: pointer;
     text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
+
+#dyte-handraise-el li p {
+   flex-grow: 1;
+   margin: 0;
+}
+#dyte-handraise-el li button {
+   margin-left: 5px;
+ }
