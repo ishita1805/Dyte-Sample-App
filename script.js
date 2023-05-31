@@ -45,6 +45,7 @@ DyteClient.init({
 }).then((meeting) => {
   passMeetingProp(meeting);
   m = meeting;
+  document.getElementById('my-dialog').meeting = meeting;
   document.getElementById('my-audio').meeting = meeting;
   document.getElementById('my-notifications').meeting = meeting;
   document.getElementById('my-notifications').config = {
