@@ -109,15 +109,17 @@ DyteClient.init({
 });
 
 // Listen for state updates
-document.body.addEventListener('dyteStateUpdate', ({detail}) => {
+document.body.addEventListener('dyteStateUpdate', ({ detail }) => {
   if (detail.activeSidebar) {
     document.getElementById('dyte-sidebar-el').style.display = 'flex';
     document.getElementById('dyte-handraise-el').style.display = 'none';
+    document.querySelector('dyte-sidebar').states = { sidebar: detail.sidebar };
   } else {
     document.getElementById('dyte-sidebar-el').style.display = 'none';
     document.getElementById('dyte-handraise-el').style.display = 'flex';
+    document.querySelector('dyte-sidebar').states = { sidebar: 'none' };
   }
-})
+});
 
 document.getElementsByTagName('dyte-leave-button')[0].addEventListener('click', () => {
   console.log('leave meeting');
